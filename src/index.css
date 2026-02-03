@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@config "../tailwind.config.js";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 font-sans antialiased;
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 100% 0%, rgba(234, 179, 8, 0.05) 0%, transparent 30%);
+}
+
+.glass-panel {
+  @apply bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 shadow-xl;
+}
+
+.glass-card {
+  @apply bg-slate-800/40 backdrop-blur-md border border-slate-700/30 shadow-lg hover:border-gold-500/50 transition-all duration-300;
+}
+
+/* Custom Scrollbar for premium feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-700 rounded-full hover:bg-slate-600;
+}
