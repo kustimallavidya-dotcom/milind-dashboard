@@ -7,17 +7,23 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MilindCorp Dashboard</title>
     <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#F4F7FE">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <link rel="icon" href="./icon.svg" type="image/svg+xml">
 </head>
 
 <body>
+    <!-- Top Header -->
     <header class="app-header">
-        <button id="back-btn" class="icon-btn hidden"><i class="fas fa-arrow-left"></i></button>
-        <h1 id="app-title">माझे डॅशबोर्ड</h1>
-        <button id="home-btn" class="icon-btn"><i class="fas fa-home"></i></button>
+        <div class="header-content">
+            <button id="back-btn" class="glass-btn hidden"><i class="fas fa-chevron-left"></i></button>
+            <div class="title-area">
+                <h1 id="app-title">MilindCorp</h1>
+                <p id="app-subtitle" class="subtitle">तुमचा लाइफ डॅशबोर्ड</p>
+            </div>
+            <button id="home-btn" class="glass-btn"><i class="fas fa-house"></i></button>
+        </div>
     </header>
 
     <main id="app-content" class="fade-in">
@@ -27,32 +33,39 @@
     <!-- Modal for Create/Edit -->
     <div id="modal-overlay" class="hidden">
         <div class="modal">
-            <h2 id="modal-title">नवीन जोडा</h2>
-            <input type="text" id="modal-input" placeholder="नाव लिहा...">
+            <div class="modal-header">
+                <h2 id="modal-title">नवीन जोडा</h2>
+                <button id="modal-close-icon" class="icon-btn text-muted"><i class="fas fa-xmark"></i></button>
+            </div>
+
+            <div class="input-wrapper">
+                <i class="fas fa-pen input-icon"></i>
+                <input type="text" id="modal-input" placeholder="येथे नाव लिहा...">
+            </div>
+
             <!-- Icon picker for Sub-Tabs -->
             <div id="icon-picker" class="hidden">
-                <p>आयकॉन निवडा:</p>
+                <p class="picker-label">एक सुंदर आयकॉन निवडा:</p>
                 <div class="icon-grid">
-                    <i class="fas fa-briefcase selected" data-icon="fas fa-briefcase"></i>
-                    <i class="fas fa-laptop" data-icon="fas fa-laptop"></i>
-                    <i class="fas fa-chalkboard-user" data-icon="fas fa-chalkboard-user"></i>
-                    <i class="fas fa-dumbbell" data-icon="fas fa-dumbbell"></i>
-                    <i class="fas fa-om" data-icon="fas fa-om"></i>
-                    <i class="fas fa-brain" data-icon="fas fa-brain"></i>
-                    <i class="fas fa-piggy-bank" data-icon="fas fa-piggy-bank"></i>
-                    <i class="fas fa-home" data-icon="fas fa-home"></i>
-                    <i class="fas fa-heart" data-icon="fas fa-heart"></i>
-                    <i class="fas fa-book" data-icon="fas fa-book"></i>
-                    <i class="fas fa-star" data-icon="fas fa-star"></i>
-                    <i class="fas fa-shopping-cart" data-icon="fas fa-shopping-cart"></i>
-                    <i class="fas fa-car" data-icon="fas fa-car"></i>
-                    <i class="fas fa-plane" data-icon="fas fa-plane"></i>
-                    <i class="fas fa-music" data-icon="fas fa-music"></i>
+                    <div class="icon-box selected" data-icon="fas fa-briefcase"><i class="fas fa-briefcase"></i></div>
+                    <div class="icon-box" data-icon="fas fa-laptop"><i class="fas fa-laptop"></i></div>
+                    <div class="icon-box" data-icon="fas fa-chart-line"><i class="fas fa-chart-line"></i></div>
+                    <div class="icon-box" data-icon="fas fa-dumbbell"><i class="fas fa-dumbbell"></i></div>
+                    <div class="icon-box" data-icon="fas fa-om"><i class="fas fa-om"></i></div>
+                    <div class="icon-box" data-icon="fas fa-brain"><i class="fas fa-brain"></i></div>
+                    <div class="icon-box" data-icon="fas fa-piggy-bank"><i class="fas fa-piggy-bank"></i></div>
+                    <div class="icon-box" data-icon="fas fa-house"><i class="fas fa-house"></i></div>
+                    <div class="icon-box" data-icon="fas fa-heart"><i class="fas fa-heart"></i></div>
+                    <div class="icon-box" data-icon="fas fa-book"><i class="fas fa-book"></i></div>
+                    <div class="icon-box" data-icon="fas fa-star"><i class="fas fa-star"></i></div>
+                    <div class="icon-box" data-icon="fas fa-cart-shopping"><i class="fas fa-cart-shopping"></i></div>
+                    <div class="icon-box" data-icon="fas fa-car"><i class="fas fa-car"></i></div>
+                    <div class="icon-box" data-icon="fas fa-plane"><i class="fas fa-plane"></i></div>
+                    <div class="icon-box" data-icon="fas fa-music"><i class="fas fa-music"></i></div>
                 </div>
             </div>
             <div class="modal-actions">
-                <button id="modal-cancel">रद्द करा</button>
-                <button id="modal-save" class="primary-btn">सेव्ह करा</button>
+                <button id="modal-save" class="glow-btn">सेव्ह करा <i class="fas fa-check"></i></button>
             </div>
         </div>
     </div>

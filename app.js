@@ -7,16 +7,17 @@ const DEFAULT_DATA = {
         { id: 't4', name: 'ध्यान धारणा', icon: 'fas fa-om', subTabs: [] },
         { id: 't5', name: 'माझी मनोवृत्ती', icon: 'fas fa-brain', subTabs: [] },
         { id: 't6', name: 'माझी बचत', icon: 'fas fa-piggy-bank', subTabs: [] },
-        { id: 't7', name: 'माझे कुटुंब', icon: 'fas fa-home', subTabs: [] }
+        { id: 't7', name: 'माझे कुटुंब', icon: 'fas fa-house', subTabs: [] }
     ]
 };
 
 // State Variables
 let appData = JSON.parse(localStorage.getItem('milindCorpData')) || DEFAULT_DATA;
-let currentPath = []; // [] = Home, ['t1'] = inside Master, ['t1', 'st1'] = inside SubTab, etc.
+let currentPath = [];
 
 // DOM Elements
 const appTitle = document.getElementById('app-title');
+const appSubtitle = document.getElementById('app-subtitle');
 const appContent = document.getElementById('app-content');
 const backBtn = document.getElementById('back-btn');
 const homeBtn = document.getElementById('home-btn');
@@ -26,22 +27,22 @@ const modalOverlay = document.getElementById('modal-overlay');
 const modalTitle = document.getElementById('modal-title');
 const modalInput = document.getElementById('modal-input');
 const iconPicker = document.getElementById('icon-picker');
-const modalCancel = document.getElementById('modal-cancel');
+const modalCloseIcon = document.getElementById('modal-close-icon');
 const modalSave = document.getElementById('modal-save');
-const iconElements = document.querySelectorAll('.icon-grid i');
+const iconElements = document.querySelectorAll('.icon-box');
 
 let modalCallback = null;
 let selectedIcon = 'fas fa-briefcase';
 
-// Utility to Save Data
+// Utility
 const saveData = () => localStorage.setItem('milindCorpData', JSON.stringify(appData));
 const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
 
-// Setup Event Listeners
+// Event Listeners
 homeBtn.addEventListener('click', goHome);
 backBtn.addEventListener('click', goBack);
 
-modalCancel.addEventListener('click', () => {
+modalCloseIcon.addEventListener('click', () => {
     modalOverlay.classList.add('hidden');
     modalInput.blur();
 });
@@ -53,79 +54,61 @@ modalSave.addEventListener('click', () => {
         modalOverlay.classList.add('hidden');
     } else {
         alert('कृपया नाव लिहा.');
+        modalInput.focus();
     }
 });
 
 iconElements.forEach(icon => {
     icon.addEventListener('click', (e) => {
         iconElements.forEach(i => i.classList.remove('selected'));
-        e.target.classList.add('selected');
-        selectedIcon = e.target.getAttribute('data-icon');
+        const el = e.target.closest('.icon-box');
+        el.classList.add('selected');
+        selectedIcon = el.getAttribute('data-icon');
     });
 });
 
-// Navigation Functions
-function goHome() {
-    currentPath = [];
-    render();
-}
+function goHome() { currentPath = []; render(); }
+function goBack() { if (currentPath.length > 0) { currentPath.pop(); render(); } }
 
-function goBack() {
-    if (currentPath.length > 0) {
-        currentPath.pop();
-        render();
-    }
-}
-
-// Android Back Button / PWA History support
 window.addEventListener('popstate', (e) => {
     if (currentPath.length === 0) {
-        if (!confirm('तुम्हाला खात्री आहे की तुम्ही बाहेर पडू इच्छिता? (Are you sure you want to exit?)')) {
+        if (!confirm('तुम्हाला खात्री आहे की तुम्ही बाहेर पडू इच्छिता?')) {
             history.pushState(null, null, window.location.href);
         } else {
-            // Let the device exit
             window.history.back();
         }
-    } else {
-        goBack();
-    }
+    } else { goBack(); }
 });
 
-// Render Main Loop
 function render() {
-    // push history state for intercepting back button
     history.pushState(null, null, window.location.href);
-
     appContent.innerHTML = '';
     window.scrollTo(0, 0);
 
-    if (currentPath.length === 0) {
-        renderMasterTabs();
-    } else if (currentPath.length === 1) {
-        renderSubTabs();
-    } else if (currentPath.length === 2) {
-        renderInterfaces();
-    } else if (currentPath.length === 3) {
-        renderInterfaceDetail();
-    }
+    if (currentPath.length === 0) renderMasterTabs();
+    else if (currentPath.length === 1) renderSubTabs();
+    else if (currentPath.length === 2) renderInterfaces();
+    else if (currentPath.length === 3) renderInterfaceDetail();
 }
 
-// 1. Render Master Tabs
 function renderMasterTabs() {
-    appTitle.innerText = "लाइफ डॅशबोर्ड";
+    appTitle.innerText = "MilindCorp";
+    appSubtitle.innerText = "तुमचा अतिसुंदर लाइफ डॅशबोर्ड";
     backBtn.classList.add('hidden');
 
     const grid = document.createElement('div');
     grid.className = 'grid-container';
 
-    appData.tabs.forEach((tab, index) => {
+    appData.tabs.forEach(tab => {
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-            <i class="${tab.icon || 'fas fa-folder'}"></i>
+            <div class="action-group">
+                <button class="action-btn edit" onclick="event.stopPropagation(); editMasterTab('${tab.id}', '${tab.name}', '${tab.icon}')"><i class="fas fa-pen"></i></button>
+                <button class="action-btn delete" onclick="event.stopPropagation(); deleteMasterTab('${tab.id}', '${tab.name}')"><i class="fas fa-trash"></i></button>
+            </div>
+            <div class="icon-wrapper"><i class="${tab.icon || 'fas fa-folder'} main-icon"></i></div>
             <h3>${tab.name}</h3>
-            <button class="action-menu edit" onclick="event.stopPropagation(); editMasterTab('${tab.id}', '${tab.name}', '${tab.icon}')" title="Rename"><i class="fas fa-edit"></i></button>
-            <button class="action-menu" style="right: 5px; color:var(--danger)" onclick="event.stopPropagation(); deleteMasterTab('${tab.id}', '${tab.name}')" title="Delete"><i class="fas fa-trash"></i></button>
         `;
         card.onclick = () => { currentPath.push(tab.id); render(); };
         grid.appendChild(card);
@@ -138,13 +121,13 @@ function renderMasterTabs() {
     }));
 }
 
-// 2. Render Sub Tabs
 function renderSubTabs() {
     const tabId = currentPath[0];
     const tab = appData.tabs.find(t => t.id === tabId);
     if (!tab) return goHome();
 
     appTitle.innerText = tab.name;
+    appSubtitle.innerText = "काय काम करायचे आहे?";
     backBtn.classList.remove('hidden');
 
     if (!tab.subTabs) tab.subTabs = [];
@@ -153,17 +136,19 @@ function renderSubTabs() {
     grid.className = 'grid-container';
 
     if (tab.subTabs.length === 0) {
-        appContent.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding: 50px 20px;">येथे काहीही नाही. नवीन सब-टॅब जोडण्यासाठी + बटणावर क्लिक करा.</p>';
+        appContent.innerHTML = '<div style="text-align:center; margin-top: 40px;"><img src="https://cdni.iconscout.com/illustration/premium/thumb/folder-is-empty-illustration-download-in-svg-png-gif-file-formats--no-data-record-file-miscellaneous-pack-illustrations-3312480.png" width="200" style="opacity:0.6"/><p style="color:var(--text-muted); font-size:1.1rem; margin-top:15px; font-weight:500;">येथे काहीही नाही. <br>खालील <b>+</b> बटण दाबून सुरुवात करा.</p></div>';
     }
 
     tab.subTabs.forEach(sub => {
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-            <i class="${sub.icon || 'fas fa-file'}"></i>
+            <div class="action-group">
+                <button class="action-btn edit" onclick="event.stopPropagation(); editSubTab('${sub.id}', '${sub.name}', '${sub.icon}')"><i class="fas fa-pen"></i></button>
+                <button class="action-btn delete" onclick="event.stopPropagation(); deleteSubTab('${sub.id}', '${sub.name}')"><i class="fas fa-trash"></i></button>
+            </div>
+            <div class="icon-wrapper"><i class="${sub.icon || 'fas fa-file'} main-icon"></i></div>
             <h3>${sub.name}</h3>
-            <button class="action-menu edit" onclick="event.stopPropagation(); editSubTab('${sub.id}', '${sub.name}', '${sub.icon}')" title="Rename"><i class="fas fa-edit"></i></button>
-            <button class="action-menu" style="right: 5px; color:var(--danger)" onclick="event.stopPropagation(); deleteSubTab('${sub.id}', '${sub.name}')" title="Delete"><i class="fas fa-trash"></i></button>
         `;
         card.onclick = () => { currentPath.push(sub.id); render(); };
         grid.appendChild(card);
@@ -183,7 +168,6 @@ function renderSubTabs() {
     }));
 }
 
-// 3. Render Interfaces
 function renderInterfaces() {
     const tabId = currentPath[0];
     const subTabId = currentPath[1];
@@ -193,6 +177,7 @@ function renderInterfaces() {
     if (!subTab) return goBack();
 
     appTitle.innerText = subTab.name;
+    appSubtitle.innerText = "नियोजन आणि कार्य";
     backBtn.classList.remove('hidden');
 
     if (!subTab.interfaces) subTab.interfaces = [];
@@ -202,10 +187,13 @@ function renderInterfaces() {
         const item = document.createElement('div');
         item.className = 'list-item';
         item.innerHTML = `
-            <h3><i class="${intf.type === 'todo' ? 'fas fa-list-check' : 'fas fa-align-left'}" style="margin-right:8px; color:var(--primary)"></i> ${intf.name}</h3>
+            <div>
+                <i class="${intf.type === 'todo' ? 'fas fa-list-check' : 'fas fa-align-left'} item-icon"></i>
+                <h3>${intf.name}</h3>
+            </div>
             <div class="list-actions">
-                <button class="icon-btn text-muted" onclick="event.stopPropagation(); editInterface('${intf.id}', '${intf.name}')"><i class="fas fa-edit"></i></button>
-                <button class="icon-btn text-danger" onclick="event.stopPropagation(); deleteInterface('${intf.id}', '${intf.name}')"><i class="fas fa-trash"></i></button>
+                <button class="action-btn edit" onclick="event.stopPropagation(); editInterface('${intf.id}', '${intf.name}')"><i class="fas fa-pen"></i></button>
+                <button class="action-btn delete" onclick="event.stopPropagation(); deleteInterface('${intf.id}', '${intf.name}')"><i class="fas fa-trash"></i></button>
             </div>
         `;
         item.onclick = () => { currentPath.push(intf.id); render(); };
@@ -219,7 +207,6 @@ function renderInterfaces() {
     }));
 }
 
-// 4. Render Interface Detail
 function renderInterfaceDetail() {
     const tabId = currentPath[0];
     const subTabId = currentPath[1];
@@ -232,17 +219,17 @@ function renderInterfaceDetail() {
     if (!intf) return goBack();
 
     appTitle.innerText = intf.name;
+    appSubtitle.innerText = intf.type === 'text' ? 'तुमचे विचार लिहा' : 'महत्वाची कामे';
     backBtn.classList.remove('hidden');
 
     if (intf.type === 'text') {
         const textarea = document.createElement('textarea');
         textarea.className = 'editor-area';
         textarea.value = intf.content || '';
-        textarea.placeholder = "येथे तुमचे विचार आणि योजना लिहा...";
+        textarea.placeholder = "येथे तुमचे विचार आणि योजना सविस्तर लिहा...";
         let timeout = null;
         textarea.oninput = (e) => {
             intf.content = e.target.value;
-            // auto save debounce
             clearTimeout(timeout);
             timeout = setTimeout(() => saveData(), 500);
         };
@@ -259,7 +246,7 @@ function renderTodoList(intf) {
     inputGroup.className = 'todo-input-group';
     inputGroup.innerHTML = `
         <input type="text" id="new-todo-input" placeholder="नवीन काम जोडा...">
-        <button class="btn primary-btn" id="add-todo-btn">जोडा</button>
+        <button class="todo-add-btn" id="add-todo-btn"><i class="fas fa-plus"></i></button>
     `;
 
     const container = document.createElement('div');
@@ -294,7 +281,7 @@ function refreshTodoList(intf) {
     container.innerHTML = '';
 
     if (intf.content.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top: 20px;">कोणतेही काम नाही. वरून नवीन काम जोडा.</p>';
+        container.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:30px; font-weight:500;">सध्या कोणतेही काम नाही. वरून नवीन काम जोडा.</p>';
         return;
     }
 
@@ -303,28 +290,25 @@ function refreshTodoList(intf) {
         item.className = `todo-item ${task.done ? 'done' : ''}`;
         item.innerHTML = `
             <div class="todo-check ${task.done ? 'done' : ''}" onclick="toggleTodo('${intf.id}', ${index})">
-                <i class="fas fa-check"></i>
+                <i class="fas fa-check" style="${task.done ? 'font-size:0.9rem;' : 'display:none;'}"></i>
             </div>
             <span onclick="toggleTodo('${intf.id}', ${index})">${task.text}</span>
-            <button class="icon-btn text-danger" onclick="deleteTodo('${intf.id}', ${index})"><i class="fas fa-times"></i></button>
+            <button class="action-btn delete" onclick="deleteTodo('${intf.id}', ${index})"><i class="fas fa-xmark"></i></button>
         `;
         container.appendChild(item);
     });
 }
 
-// Global actions for Todo
 window.toggleTodo = (intfId, index) => {
     const intf = getCurrentInterface(intfId);
     intf.content[index].done = !intf.content[index].done;
-    saveData();
-    refreshTodoList(intf);
+    saveData(); refreshTodoList(intf);
 }
 window.deleteTodo = (intfId, index) => {
-    if (confirm('खरेच हे काम डिलीट करायचे आहे का?')) {
+    if (confirm('हे काम डिलीट करायचे आहे का?')) {
         const intf = getCurrentInterface(intfId);
         intf.content.splice(index, 1);
-        saveData();
-        refreshTodoList(intf);
+        saveData(); refreshTodoList(intf);
     }
 }
 function getCurrentInterface(intfId) {
@@ -333,7 +317,6 @@ function getCurrentInterface(intfId) {
     return appData.tabs.find(t => t.id === tabId).subTabs.find(st => st.id === subTabId).interfaces.find(i => i.id === intfId);
 }
 
-// UI Helpers
 function addFAB(onClickAction) {
     const fab = document.createElement('button');
     fab.className = 'fab';
@@ -353,12 +336,6 @@ function openModal(title, showIconPicker, callback, defaultName = '', defaultIco
             if (i.getAttribute('data-icon') === defaultIcon) i.classList.add('selected');
             else i.classList.remove('selected');
         });
-    } else {
-        selectedIcon = 'fas fa-briefcase';
-        iconElements.forEach((i, idx) => {
-            if (idx === 0) i.classList.add('selected');
-            else i.classList.remove('selected');
-        });
     }
 
     modalCallback = callback;
@@ -366,17 +343,15 @@ function openModal(title, showIconPicker, callback, defaultName = '', defaultIco
     setTimeout(() => modalInput.focus(), 100);
 }
 
-// Edit & Delete Overrides
 window.editMasterTab = (id, oldName, oldIcon) => {
     openModal('नाव बदला (Master Tab)', true, (newName, newIcon) => {
         const tab = appData.tabs.find(t => t.id === id);
-        tab.name = newName;
-        tab.icon = newIcon;
+        tab.name = newName; tab.icon = newIcon;
         saveData(); render();
     }, oldName, oldIcon);
 }
 window.deleteMasterTab = (id, name) => {
-    if (confirm(`खरेच '${name}' डिलीट करायचे आहे का? मधील सर्व माहिती नष्ट होईल.`)) {
+    if (confirm(`खरेच '${name}' डिलीट करायचे आहे का? सर्व माहिती नष्ट होईल.`)) {
         appData.tabs = appData.tabs.filter(t => t.id !== id);
         saveData(); render();
     }
@@ -386,8 +361,7 @@ window.editSubTab = (id, oldName, oldIcon) => {
     openModal('नाव बदला (Sub Tab)', true, (newName, newIcon) => {
         const tab = appData.tabs.find(t => t.id === currentPath[0]);
         const subTab = tab.subTabs.find(st => st.id === id);
-        subTab.name = newName;
-        subTab.icon = newIcon;
+        subTab.name = newName; subTab.icon = newIcon;
         saveData(); render();
     }, oldName, oldIcon);
 }
@@ -404,8 +378,7 @@ window.editInterface = (id, oldName) => {
         const tab = appData.tabs.find(t => t.id === currentPath[0]);
         const subTab = tab.subTabs.find(st => st.id === currentPath[1]);
         const intf = subTab.interfaces.find(i => i.id === id);
-        intf.name = newName;
-        saveData(); render();
+        intf.name = newName; saveData(); render();
     }, oldName);
 }
 window.deleteInterface = (id, name) => {
@@ -417,5 +390,4 @@ window.deleteInterface = (id, name) => {
     }
 }
 
-// Initial render wrapper
 window.onload = render;
