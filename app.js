@@ -21,6 +21,9 @@ const appSubtitle = document.getElementById('app-subtitle');
 const appContent = document.getElementById('app-content');
 const backBtn = document.getElementById('back-btn');
 const homeBtn = document.getElementById('home-btn');
+const editModeBtn = document.getElementById('edit-mode-btn');
+
+let isEditMode = false;
 
 // Modal Elements
 const modalOverlay = document.getElementById('modal-overlay');
@@ -41,6 +44,19 @@ const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
 // Event Listeners
 homeBtn.addEventListener('click', goHome);
 backBtn.addEventListener('click', goBack);
+
+editModeBtn.addEventListener('click', () => {
+    isEditMode = !isEditMode;
+    if (isEditMode) {
+        document.body.classList.add('edit-mode');
+        editModeBtn.style.color = 'var(--primary)';
+        editModeBtn.style.background = 'var(--accent)';
+    } else {
+        document.body.classList.remove('edit-mode');
+        editModeBtn.style.color = 'var(--text-muted)';
+        editModeBtn.style.background = 'white';
+    }
+});
 
 modalCloseIcon.addEventListener('click', () => {
     modalOverlay.classList.add('hidden');

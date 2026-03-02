@@ -183,8 +183,14 @@ body {
     right: 12px;
     display: flex;
     gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+body.edit-mode .action-group {
     opacity: 1;
-    /* Always show on mobile but subtle */
+    pointer-events: auto;
 }
 
 .action-btn {
@@ -251,6 +257,7 @@ body {
 .list-item i.item-icon {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 1.2rem;
 }
@@ -258,6 +265,14 @@ body {
 .list-actions {
     display: flex;
     gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+body.edit-mode .list-actions {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* Giant Glow FAB */
@@ -279,6 +294,15 @@ body {
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 5;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px) scale(0.9);
+}
+
+body.edit-mode .fab {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
 }
 
 .fab:active {
