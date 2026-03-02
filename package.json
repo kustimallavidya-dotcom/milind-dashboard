@@ -1,0 +1,8 @@
+{
+    "name": "milindcorp",
+    "version": "1.0.0",
+    "scripts": {
+        "install": "echo 'No install needed'",
+        "build": "mkdir -p dist && cp index.html styles.css app.js manifest.json sw.js icon.svg dist/"
+    }
+}
