@@ -410,4 +410,40 @@ window.deleteInterface = (id, name) => {
     }
 }
 
-window.onload = render;
+// PIN Authentication LOGIC
+window.onload = () => {
+    const pinOverlay = document.getElementById('pin-overlay');
+    const pinSubmitBtn = document.getElementById('pin-submit-btn');
+    const pinInput = document.getElementById('pin-input');
+    const pinError = document.getElementById('pin-error');
+    const correctPin = '5849';
+
+    if (sessionStorage.getItem('milindcorp_unlocked') === 'true') {
+        pinOverlay.style.display = 'none';
+        render();
+    } else {
+        pinOverlay.style.display = 'flex';
+        appContent.innerHTML = ''; // Hide everything else
+
+        const checkPin = () => {
+            if (pinInput.value === correctPin) {
+                sessionStorage.setItem('milindcorp_unlocked', 'true');
+                pinOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    pinOverlay.style.display = 'none';
+                    render();
+                }, 300);
+            } else {
+                pinError.classList.remove('hidden');
+                pinInput.value = '';
+                pinInput.focus();
+            }
+        };
+
+        pinSubmitBtn.addEventListener('click', checkPin);
+        pinInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPin();
+        });
+        pinInput.focus();
+    }
+};

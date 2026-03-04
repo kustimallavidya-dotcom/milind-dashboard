@@ -11,10 +11,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <link rel="icon" href="./icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="./icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 
 <body>
-    <!-- Top Header -->
     <!-- Top Header -->
     <header class="app-header">
         <div class="header-content">
@@ -77,6 +79,20 @@
             <div class="modal-actions">
                 <button id="modal-save" class="glow-btn">सेव्ह करा <i class="fas fa-check"></i></button>
             </div>
+        </div>
+    </div>
+
+    <!-- PIN Screen Overlay -->
+    <div id="pin-overlay">
+        <div class="pin-container">
+            <img src="./icon.png" alt="MilindCorp Logo">
+            <h2>MilindCorp</h2>
+            <p>कृपया ॲप उघडण्यासाठी तुमचा पिन (PIN) टाका.</p>
+            <input type="password" id="pin-input" inputmode="numeric" placeholder="****" maxlength="4">
+            <button id="pin-submit-btn" class="glow-btn" style="margin-top: 20px;">अनलॉक करा <i
+                    class="fas fa-unlock"></i></button>
+            <p id="pin-error" class="text-danger hidden" style="margin-top: 15px; font-weight: 500;">चुकीचा पिन! पुन्हा
+                प्रयत्न करा.</p>
         </div>
     </div>
 

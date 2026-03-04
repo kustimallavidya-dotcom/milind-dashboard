@@ -1,11 +1,11 @@
-const CACHE_NAME = 'milindcorp-cache-v3';
+const CACHE_NAME = 'milindcorp-cache-v4';
 const urlsToCache = [
     './',
     './index.html',
     './styles.css',
     './app.js',
     './manifest.json',
-    './icon.svg',
+    './icon.png',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
