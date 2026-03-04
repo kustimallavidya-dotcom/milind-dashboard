@@ -111,6 +111,8 @@ function renderMasterTabs() {
     appTitle.innerText = "MilindCorp";
     appSubtitle.innerText = "तुमचा अतिसुंदर लाइफ डॅशबोर्ड";
     backBtn.classList.add('hidden');
+    const logo = document.getElementById('app-logo');
+    if (logo) logo.style.display = 'block';
 
     const grid = document.createElement('div');
     grid.className = 'grid-container';
@@ -145,6 +147,8 @@ function renderSubTabs() {
     appTitle.innerText = tab.name;
     appSubtitle.innerText = "काय काम करायचे आहे?";
     backBtn.classList.remove('hidden');
+    const logo = document.getElementById('app-logo');
+    if (logo) logo.style.display = 'none';
 
     if (!tab.subTabs) tab.subTabs = [];
 
